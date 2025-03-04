@@ -112,14 +112,20 @@ async function showProgressNotification(cookie, amount) {
 
 
 
+   // Đảm bảo xóa mọi animation cũ trên progressFill
+    gsap.killTweensOf(progressFill);
+
     // Timeline cho progress bar
-    const tl = gsap.timeline();
+    const tl = gsap.timeline({ 
+        defaults: { ease: "linear" } // Đặt ease mặc định cho tất cả bước
+    });
+
     tl.fromTo(progressFill, 
         { width: "0%" },
         { 
             width: "10%", 
-            duration: 1, // 0-10% trong 1 giây
-            ease: "linear",
+            duration: 1,
+            immediateRender: true, // Đảm bảo bắt đầu từ 0%
             onStart: () => {
                 progressMessage.textContent = "Loading File User...";
             }
@@ -127,25 +133,28 @@ async function showProgressNotification(cookie, amount) {
     ).to(progressFill, 
         { 
             width: "20%", 
-            duration: 1, // 10-20% trong 1 giây
-            ease: "linear",
+            duration: 1,
             onStart: () => {
-                progressMessage.textContent = "Bot is up to minning";
+                progressMessage.textContent = "Bot is up to mining";
             }
         }
     ).to(progressFill, 
         { 
             width: "100%", 
-            duration: 3, // 20-100% trong 3 giây
-            ease: "linear",
+            duration: 3,
             onStart: () => {
-                progressMessage.textContent = `Minning... ${amount || "0"} Robux...`;
+                progressMessage.textContent = `Mining... ${amount || "0"} Robux...`;
             },
             onComplete: () => {
-                // Không tự đóng, đợi API trả kết quả
+                progressMessage.textContent = "Progress completed!";
             }
         }
     );
+
+    // Debug: Theo dõi tiến trình
+    tl.eventCallback("onUpdate", () => {
+        console.log("Current width:", progressFill.style.width);
+    });
 }
 
 // Ẩn thông báo với animation
