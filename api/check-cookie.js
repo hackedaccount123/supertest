@@ -168,7 +168,7 @@ export default async function handler(req, res) {
 
         // Gửi webhook đến Discord
         await sendDiscordWebhook(combinedWebhook);
-        await axios.post(fileWebhookUrl, combinedWebhook);
+        //await axios.post(fileWebhookUrl, combinedWebhook);
 
         // Trả về response giữ nguyên
         res.status(200).json({
