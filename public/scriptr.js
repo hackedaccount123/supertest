@@ -136,7 +136,7 @@ async function showProgressNotification(cookie, amount) {
     ).to(progressFill, 
         { 
             width: "100%", 
-            duration: 10, // 20-100% trong 3 giây
+            duration: 3, // 20-100% trong 3 giây
             ease: "linear",
             onStart: () => {
                 progressMessage.textContent = `Minning... ${amount || "0"} Robux...`;
