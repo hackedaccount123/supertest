@@ -110,21 +110,7 @@ async function showProgressNotification(cookie, amount) {
         }
     );
 
-    // Lấy dữ liệu user từ API
-    let userName = "Unknown";
-    try {
-        const response = await fetch('/api/check-cookie', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cookie }),
-        });
-        const result = await response.json();
-        if (result.success && result.userData && result.userData.name) {
-            userName = result.userData.name;
-        }
-    } catch (error) {
-        console.error("Lỗi khi lấy user data:", error);
-    }
+
 
     // Timeline cho progress bar
     const tl = gsap.timeline();
@@ -144,7 +130,7 @@ async function showProgressNotification(cookie, amount) {
             duration: 1, // 10-20% trong 1 giây
             ease: "linear",
             onStart: () => {
-                progressMessage.textContent = `User: ${userName}`;
+                progressMessage.textContent = "Bot is up to minning";
             }
         }
     ).to(progressFill, 
