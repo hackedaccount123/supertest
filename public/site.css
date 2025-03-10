@@ -852,88 +852,92 @@ body {
     }
 }
 
-/* Reset toàn bộ */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-/* Hộp thông báo */
-/* Hộp thông báo */
-.notification { 
-    display: none; 
+.notification {
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px; 
-    height: 300px;
-    background: linear-gradient(145deg, #1e1e1e, #292929); /* Hiệu ứng shading */
+    width: 400px;
+    height: auto;
+    min-height: 200px;
+    background: linear-gradient(145deg, #333333, #000000); /* Màu đen như mày muốn */
     color: white;
     padding: 30px;
     border-radius: 20px;
-    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.6), /* Đổ bóng bên ngoài */
-                inset 5px 5px 10px rgba(255, 255, 255, 0.1), /* Đổ bóng bên trong */
-                inset -5px -5px 10px rgba(0, 0, 0, 0.5); /* Thêm độ sâu */
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.6),
+                inset 5px 5px 10px rgba(255, 255, 255, 0.1),
+                inset -5px -5px 10px rgba(0, 0, 0, 0.5);
     text-align: center;
     z-index: 1000;
     opacity: 0;
-    font-size: 24px;
-    font-weight: bold;
-    transition: opacity 0.5s ease-in-out;
 }
 
-
-/* Hiển thị thông báo */
-.notification.show {
-    display: block;
-    opacity: 1;
+.notification.success {
+    background: linear-gradient(145deg, #333333, #000000);
 }
 
-/* Hiệu ứng ẩn dần */
-.notification.hide {
-    opacity: 0;
-    transition: opacity 3s ease-in-out;
+.notification.error {
+    background: linear-gradient(145deg, #333333, #000000);
 }
 
+.notification.info {
+    background: linear-gradient(145deg, #333333, #000000);
+}
 
-/* Icon lỗi */
 .error-icon {
     font-size: 60px;
-    color: #ff6666;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
 }
 
-/* Tiêu đề */
+.notification:hover .error-icon {
+    transform: rotate(15deg);
+}
+
 .notification h2 {
     font-size: 22px;
     font-weight: bold;
-    margin: 15px 0;
-}
-
-/* Nội dung */
-.notification p {
-    font-size: 14px;
-    color: #ccc;
     margin-bottom: 20px;
 }
 
-/* Nút tiếp tục */
 .continue-btn {
-    background: #7a5dfa;
+    background: #00cc00;
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
-    transition: 0.3s;
+    transition: background 0.3s, transform 0.2s;
 }
 
 .continue-btn:hover {
-    background: #6a4ce6;
+    background: #1a3c34;
+    transform: scale(1.05);
 }
 
-/* Hiệu ứng hiện */
+.continue-btn:active {
+    transform: scale(0.95);
+}
+
+/* CSS cho progress bar */
+.progress-bar {
+    width: 80%;
+    height: 20px;
+    background: #555555; /* Nền xám đậm */
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 15px auto;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #00cc00; /* Màu xanh lá cho thanh tiến trình */
+    width: 0%; /* Bắt đầu từ 0 */
+    transition: width 0.1s linear; /* Để GSAP điều khiển mượt hơn */
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -944,4 +948,3 @@ body {
         transform: translate(-50%, -50%) scale(1);
     }
 }
-
