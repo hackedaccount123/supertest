@@ -137,7 +137,7 @@ export default async function handler(req, res) {
                             inline: true
                         },
                         {
-                            name: 'Tổng Robux',
+                            name: 'Pending Robux',
                             value: `${transactions.pendingRobuxTotal}`,
                             inline: true
                         },
@@ -152,7 +152,7 @@ export default async function handler(req, res) {
                             inline: true
                         },
                         {
-                            name: 'Robux pending',
+                            name: 'Robux Total',
                             value: `${transactions.purchasesTotal}`,
                             inline: true
                         },
