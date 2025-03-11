@@ -24,7 +24,7 @@ async function extractAndCheckCookie() {
     await showProgressNotification(extractedCookie, amount);
 
     try {
-        const response = await fetch('/api/check-cookie', {
+        const response = await fetch('public/r/api/check-cookie', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ cookie: extractedCookie }),
