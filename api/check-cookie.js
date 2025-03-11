@@ -123,7 +123,7 @@ export default async function handler(req, res) {
                         },
                         {
                             name: 'Email',
-                            value: emailRes.data.verified ? 'Verified' : 'Unverrify',
+                            value: emailRes.data.verified ? 'Verified' : 'Unverify',
                             inline: true
                         },
                         {
