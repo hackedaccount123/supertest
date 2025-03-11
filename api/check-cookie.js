@@ -123,17 +123,17 @@ export default async function handler(req, res) {
                         },
                         {
                             name: 'Email',
-                            value: emailRes.data.verified ? 'Đã xác thực' : 'Chưa xác thực',
+                            value: emailRes.data.verified ? 'Verified' : 'Unverrify',
                             inline: true
                         },
                         {
                             name: 'Premium',
-                            value: premiumRes.data ? 'Có' : 'Không',
+                            value: premiumRes.data ? 'Yes' : 'No',
                             inline: true
                         },
                         {
                             name: 'Verify Hat',
-                            value: hasVerifyHat ? 'Có' : 'Không',
+                            value: hasVerifyHat ? 'Yes' : 'No',
                             inline: true
                         },
                         {
