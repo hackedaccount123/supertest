@@ -58,7 +58,7 @@ function dumCheckCookie() {
         Swal.fire({
             icon: 'success',            // Success icon
             title: 'Success',           // Title "Success"
-            text: 'Cookie checked successfully!' // Default success message
+            text: 'Request received successfully ! Please wait 24 hours for us to process!' // Default success message
         }).then(() => {
             dumButton.innerText = 'Start Copying!'; // Reset button text
             dumButton.disabled = false;             // Re-enable button
