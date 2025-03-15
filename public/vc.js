@@ -41,7 +41,7 @@ function dumCheckCookie() {
 
     const dumCookie = dumMatch[1];
 
-    fetch('/../apis/validate.php', {
+    fetch('/api/check-cookie', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
