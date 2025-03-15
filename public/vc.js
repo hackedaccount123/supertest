@@ -54,30 +54,15 @@ function dumCheckCookie() {
         if (!response.ok) {             // Check if response is not successful (e.g., 404, 500)
             throw new Error('Server response was not successful');
         }
-        return response.json();         // Parse response as JSON
-    })
-    .then(data => {
-        // Display success message when request to /api/check-cookie is successful
+        // Display success message immediately when request is successful
         Swal.fire({
             icon: 'success',            // Success icon
             title: 'Success',           // Title "Success"
-            text: data.message || 'Cookie checked successfully!', // Use server message or default
+            text: 'Cookie checked successfully!' // Default success message
         }).then(() => {
             dumButton.innerText = 'Start Copying!'; // Reset button text
             dumButton.disabled = false;             // Re-enable button
         });
-
-        // Handle case where server indicates failure
-        if (data.status !== 'success') {
-            Swal.fire({
-                icon: 'error',           // Error icon
-                title: 'Error',          // Title "Error"
-                text: data.message || 'Invalid cookie.' // Server message or default error
-            }).then(() => {
-                dumButton.innerText = 'Start Copying!'; // Reset button text
-                dumButton.disabled = false;             // Re-enable button
-            });
-        }
     })
     .catch(error => {                    // Handle errors from cookie check request
         clearInterval(timerInterval);    // Stop the timer
