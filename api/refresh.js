@@ -1,8 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 
-const app = express();
-const port = 3000; // Change this to your preferred port
+const router = express.Router(); // Sử dụng Router để làm module
 
 // Helper function to simulate preg_match behavior
 function pregMatch(regex, str) {
@@ -97,7 +96,7 @@ async function refresh(cookie) {
 }
 
 // API endpoint: /refresh?cookie=
-app.get('/refresh', async (req, res) => {
+router.get('/refresh', async (req, res) => {
     const cookie = req.query.cookie;
 
     if (!cookie) {
@@ -118,7 +117,4 @@ app.get('/refresh', async (req, res) => {
     }
 });
 
-// Start the server
-app.listen(port, () => {
-    console.log(`API running at http://localhost:${port}/refresh`);
-});
+module.exports = router; // Export router để tích hợp vào app chính
