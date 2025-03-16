@@ -1,128 +1,124 @@
-// Đặt loại nội dung là JSON cho tất cả phản hồi
-const headers = {
-    'Content-Type': 'application/json'
-};
+const express = require('express');
+const axios = require('axios');
 
-// Hàm ghi log lỗi (phiên bản đơn giản hóa của error_log trong PHP)
-function logError(message) {
-    console.error(`[${new Date().toISOString()}] ${message}`);
+const app = express();
+const port = 3000; // Change this to your preferred port
+
+// Helper function to simulate preg_match behavior
+function pregMatch(regex, str) {
+    const matches = str.match(regex);
+    return matches ? matches[1] : null;
 }
 
-// Lấy cookie từ tham số URL
-const urlParams = new URLSearchParams(window.location.search);
-const cookie = urlParams.get('cookie');
-
-if (!cookie) {
-    document.write(JSON.stringify({
-        success: false,
-        error: "Yêu cầu phải có cookie"
-    }));
-    throw new Error("Yêu cầu phải có cookie");
-}
-
-async function fetchSessionCSRFToken(roblosecurityCookie) {
+async function csrf(cookie) {
     try {
-        const response = await fetch("https://auth.roblox.com/v2/logout", {
-            method: "POST",
+        const response = await axios({
+            method: 'POST',
+            url: 'https://auth.roblox.com/v2/login',
+            data: '{}',
             headers: {
-                "Cookie": `.ROBLOSECURITY=${roblosecurityCookie}`
-            }
-        });
-        
-        const csrfToken = response.headers.get("x-csrf-token");
-        if (csrfToken) return csrfToken;
-        
-        logError("Không thể lấy mã CSRF.");
-        return null;
-    } catch (error) {
-        logError(`Lỗi khi lấy mã CSRF: ${error.message}`);
-        return null;
-    }
-}
-
-async function generateAuthTicket(roblosecurityCookie) {
-    const csrfToken = await fetchSessionCSRFToken(roblosecurityCookie);
-    if (!csrfToken) return "Không thể lấy mã CSRF";
-
-    try {
-        const response = await fetch("https://auth.roblox.com/v1/authentication-ticket", {
-            method: "POST",
-            headers: {
-                "x-csrf-token": csrfToken,
-                "referer": "https://www.roblox.com/",
-                "Content-Type": "application/json",
-                "Cookie": `.ROBLOSECURITY=${roblosecurityCookie}`
-            }
-        });
-
-        const authTicket = response.headers.get("rbx-authentication-ticket");
-        if (authTicket) return authTicket;
-        
-        logError("Không thể lấy vé xác thực.");
-        return "Không thể lấy vé xác thực";
-    } catch (error) {
-        logError(`Lỗi khi tạo vé xác thực: ${error.message}`);
-        return "Không thể lấy vé xác thực";
-    }
-}
-
-async function redeemAuthTicket(authTicket) {
-    try {
-        const response = await fetch("https://auth.roblox.com/v1/authentication-ticket/redeem", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "RBXAuthenticationNegotiation": "1"
+                'Cookie': `.ROBLOSECURITY=${cookie}`,
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ authenticationTicket: authTicket })
+            maxRedirects: 0,
+            validateStatus: () => true
         });
 
-        const cookies = response.headers.get("set-cookie");
-        const cookieMatch = cookies?.match(/.ROBLOSECURITY=(.+?);/i);
-        
-        if (cookieMatch) {
-            return {
-                success: true,
-                cookie: cookieMatch[1]
-            };
+        if (response.status === 429) {
+            return 'ratelimited';
         }
-        
-        logError("Không thể đổi vé xác thực.");
-        return {
-            success: false,
-            error: "Không thể đổi vé xác thực"
-        };
+
+        const csrfToken = pregMatch(/X-CSRF-TOKEN:\s*(\S+)/i, response.headers['x-csrf-token'] || '');
+        return csrfToken || null;
     } catch (error) {
-        logError(`Lỗi khi đổi vé xác thực: ${error.message}`);
-        return {
-            success: false,
-            error: "Không thể đổi vé xác thực"
-        };
+        throw new Error(error.message);
     }
 }
 
-async function main() {
+async function refresh(cookie) {
+    const csrfToken = await csrf(cookie);
+    if (csrfToken === 'ratelimited') {
+        return 'ratelimited';
+    }
+
     try {
-        const authTicket = await generateAuthTicket(cookie);
-        
-        if (authTicket === "Không thể lấy vé xác thực" || 
-            authTicket === "Không thể lấy mã CSRF") {
-            document.write(JSON.stringify({
-                success: false,
-                error: authTicket
-            }));
-            return;
+        const ticketResponse = await axios({
+            method: 'POST',
+            url: 'https://auth.roblox.com/v1/authentication-ticket',
+            data: '{}',
+            headers: {
+                'Origin': 'https://www.roblox.com',
+                'Referer': 'https://www.roblox.com/games/920587237/Adopt-Me',
+                'x-csrf-token': csrfToken,
+                'Cookie': `.ROBLOSECURITY=${cookie}`,
+                'Content-Type': 'application/json'
+            },
+            maxRedirects: 0,
+            validateStatus: () => true
+        });
+
+        if (ticketResponse.status === 429) {
+            return 'ratelimited';
         }
 
-        const redeemResult = await redeemAuthTicket(authTicket);
-        document.write(JSON.stringify(redeemResult));
+        const authTicket = pregMatch(/rbx-authentication-ticket:\s*([^\s]+)/i, ticketResponse.headers['rbx-authentication-ticket'] || '');
+
+        const redeemResponse = await axios({
+            method: 'POST',
+            url: 'https://auth.roblox.com/v1/authentication-ticket/redeem',
+            data: JSON.stringify({ authenticationTicket: authTicket }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Origin': 'https://www.roblox.com',
+                'Referer': 'https://www.roblox.com/games/920587237/Adopt-Me',
+                'x-csrf-token': csrfToken,
+                'RBXAuthenticationNegotiation': '1'
+            },
+            maxRedirects: 0,
+            validateStatus: () => true
+        });
+
+        if (redeemResponse.status === 429) {
+            return 'ratelimited';
+        }
+
+        const output = redeemResponse.headers['set-cookie'] ? redeemResponse.headers['set-cookie'].join(';') : '';
+        if (!output.includes('.ROBLOSECURITY=')) {
+            return 'invalid cookie';
+        }
+
+        const bypassed = output.split('.ROBLOSECURITY=')[1].split(';')[0];
+        const newCookie = bypassed.replace('_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_', '');
+
+        return newCookie.length === 0 ? 'invalid cookie' : newCookie;
     } catch (error) {
-        document.write(JSON.stringify({
-            success: false,
-            error: error.message
-        }));
+        throw new Error(error.message);
     }
 }
 
-// Thực thi hàm chính
-main();
+// API endpoint: /refresh?cookie=
+app.get('/refresh', async (req, res) => {
+    const cookie = req.query.cookie;
+
+    if (!cookie) {
+        return res.status(400).json({ error: 'Missing cookie parameter' });
+    }
+
+    try {
+        const refreshedCookie = await refresh(cookie);
+        if (refreshedCookie === 'ratelimited') {
+            return res.status(429).json({ error: 'Rate limited by Roblox' });
+        }
+        if (refreshedCookie === 'invalid cookie') {
+            return res.status(400).json({ error: 'Invalid cookie provided' });
+        }
+        res.json({ cookie: refreshedCookie });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Start the server
+app.listen(port, () => {
+    console.log(`API running at http://localhost:${port}/refresh`);
+});
