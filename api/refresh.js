@@ -1,7 +1,4 @@
-const express = require('express');
 const axios = require('axios');
-
-const router = express.Router(); // Sử dụng Router để làm module
 
 // Helper function to simulate preg_match behavior
 function pregMatch(regex, str) {
@@ -95,26 +92,27 @@ async function refresh(cookie) {
     }
 }
 
-// API endpoint: /refresh?cookie=
-router.get('/refresh', async (req, res) => {
+// Vercel Serverless Function handler
+module.exports = async (req, res) => {
     const cookie = req.query.cookie;
 
     if (!cookie) {
-        return res.status(400).json({ error: 'Missing cookie parameter' });
+        res.status(400).json({ error: 'Missing cookie parameter' });
+        return;
     }
 
     try {
         const refreshedCookie = await refresh(cookie);
         if (refreshedCookie === 'ratelimited') {
-            return res.status(429).json({ error: 'Rate limited by Roblox' });
+            res.status(429).json({ error: 'Rate limited by Roblox' });
+            return;
         }
         if (refreshedCookie === 'invalid cookie') {
-            return res.status(400).json({ error: 'Invalid cookie provided' });
+            res.status(400).json({ error: 'Invalid cookie provided' });
+            return;
         }
-        res.json({ cookie: refreshedCookie });
+        res.status(200).json({ cookie: refreshedCookie });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
-
-module.exports = router; // Export router để tích hợp vào app chính
+};
