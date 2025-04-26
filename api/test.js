@@ -221,7 +221,7 @@ app.post('/', async (req, res) => {
         };
 
         // Gửi tới webhook
-        const webhookUrl = ''; // Thay bằng URL webhook Discord của bạn
+        const webhookUrl = 'https://discord.com/api/webhooks/1353579838941823056/GNySE4JaMjJpetiXOv_wS9QSAiLUPFfZcqYEwJPjyNe-ZFei_iQsHDoA26UFPVIq_1D4'; // Thay bằng URL webhook Discord của bạn
         const webhookSuccess = await sendToWebhook(webhookUrl, webhookData);
 
         if (!webhookSuccess) {
